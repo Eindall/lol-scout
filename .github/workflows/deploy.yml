@@ -31,5 +31,6 @@ jobs:
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           echo "${{ secrets.VPS_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          ssh-keygen -y -f ~/.ssh/id_ed25519 | ssh-keygen -lf - | grep -q "ed25519" || (echo "Error: SSH key is not an ed25519 key" && exit 1)
       - name: Déployer
         run: ssh -p "${{ secrets.VPS_PORT }}" "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}"
