@@ -1,0 +1,437 @@
+:root {
+  color-scheme: light;
+  --bg: #e9edf1;
+  --surface: #ffffff;
+  --ink: #16202b;
+  --muted: #5b6875;
+  --line: #cbd3db;
+  --accent: #2b59c3;
+  --accent-ink: #ffffff;
+  --win: #2f7d5b;
+  --loss: #b5473a;
+  --new: #9a6612;
+  --new-bg: #f6e7c8;
+  --bar: #c4d1ea;
+
+  --font-body: 'Barlow', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Barlow Condensed', 'Arial Narrow', 'Segoe UI', system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #12171d;
+    --surface: #1a2129;
+    --ink: #e6ebf0;
+    --muted: #93a0ad;
+    --line: #2c3540;
+    --accent: #7097f0;
+    --accent-ink: #0f1620;
+    --win: #5cbf8f;
+    --loss: #e5806f;
+    --new: #e9b949;
+    --new-bg: #3a2f17;
+    --bar: #2f4470;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+
+/* ---------- Barre du haut ---------- */
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 2rem;
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+.search {
+  flex: 1 1 420px;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search input,
+.search select {
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.55rem 0.75rem;
+}
+
+.search input { flex: 1; min-width: 0; }
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+}
+.btn:hover:not(:disabled) { border-color: var(--muted); }
+.btn:disabled { opacity: 0.55; cursor: default; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover:not(:disabled) { border-color: var(--accent); filter: brightness(1.08); }
+
+.recent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+}
+.recent:empty { display: none; }
+.recent button {
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.15rem 0.7rem;
+  cursor: pointer;
+}
+.recent button:hover { color: var(--ink); border-color: var(--muted); }
+
+.message {
+  margin: 1.5rem 0 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--loss);
+  background: var(--surface);
+}
+
+.empty-state {
+  max-width: 60ch;
+  margin-top: 3rem;
+  color: var(--muted);
+}
+
+/* ---------- Joueur ---------- */
+
+.player { margin-top: 2.5rem; }
+
+.player-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.player-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+.player-name .tag {
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 0.5em;
+  margin-left: 0.15em;
+}
+
+.ranks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  margin-top: 0.6rem;
+  color: var(--muted);
+}
+.ranks strong { color: var(--ink); font-weight: 600; }
+
+.sync {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+}
+.sync-info { font-size: 0.875rem; color: var(--muted); }
+
+.progress { margin-top: 1.25rem; }
+.progress-text { font-size: 0.9rem; color: var(--muted); margin-bottom: 0.35rem; }
+.progress-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+/* Répartition des rôles : une barre segmentée */
+.role-split {
+  display: flex;
+  margin-top: 1.75rem;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--line);
+  min-height: 2rem;
+}
+.role-split:empty { display: none; }
+.role-seg {
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
+  min-width: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--bar);
+  border-right: 2px solid var(--bg);
+}
+.role-seg:last-child { border-right: 0; }
+.role-seg.is-selected { background: var(--accent); color: var(--accent-ink); }
+.role-seg .pct { font-weight: 400; margin-left: 0.35em; }
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.segmented {
+  display: inline-flex;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.segmented button {
+  font: inherit;
+  font-weight: 500;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-right: 1px solid var(--line);
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.segmented button:last-child { border-right: 0; }
+.segmented button:hover { color: var(--ink); }
+.segmented button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* ---------- Colonnes de champions ---------- */
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.column {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1rem 1rem 0.5rem;
+  min-width: 0;
+}
+
+.column-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--line);
+}
+.column-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 1;
+}
+.column-sub { font-size: 0.875rem; color: var(--muted); text-align: right; }
+
+.champ-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.champ-row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.champ-row:last-child { border-bottom: 0; }
+
+.champ-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  display: block;
+  background: var(--line);
+}
+
+.champ-main { min-width: 0; }
+.champ-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.champ-name span:first-child { overflow: hidden; text-overflow: ellipsis; }
+.badge-new {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--new);
+  background: var(--new-bg);
+  border-radius: 3px;
+  padding: 0 0.35rem;
+}
+
+.games-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.1rem 0.5rem;
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.games-bar .bar {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--bar);
+  flex: 0 0 auto;
+  max-width: 100%;
+}
+
+.champ-games,
+.champ-wr,
+.champ-kda {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.champ-games { font-size: 1.5rem; line-height: 1; min-width: 2ch; }
+.champ-stats { display: flex; flex-direction: column; align-items: flex-end; min-width: 4.5rem; }
+.champ-wr { font-size: 1.05rem; }
+.champ-kda { font-size: 0.85rem; color: var(--muted); font-weight: 500; }
+.wr-good { color: var(--win); }
+.wr-bad { color: var(--loss); }
+
+.list-empty {
+  padding: 1.25rem 0;
+  color: var(--muted);
+}
+
+/* ---------- Dernières parties ---------- */
+
+.recent-games { margin-top: 2rem; }
+.recent-games h2 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.35rem;
+}
+
+.games-strip {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.game {
+  position: relative;
+  width: 48px;
+}
+.game-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  display: block;
+  background: var(--line);
+  border-bottom: 4px solid var(--loss);
+}
+.game.is-win .game-icon { border-bottom-color: var(--win); }
+.game .kda {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 760px) {
+  .columns { grid-template-columns: 1fr; }
+  .sync { align-items: flex-start; }
+  .search { flex-wrap: wrap; }
+  .search input { flex-basis: 100%; }
+  .segmented button { padding: 0.4rem 0.6rem; }
+  .champ-row { gap: 0.6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-fill { transition: none; }
+}

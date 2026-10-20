@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scout LoL</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔭</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <header class="top">
+      <a class="wordmark" href="./">Scout</a>
+      <form class="search" id="search-form" autocomplete="off">
+        <label class="visually-hidden" for="riot-id">Riot ID</label>
+        <input id="riot-id" name="riotId" type="text" placeholder="Pseudo#TAG" required spellcheck="false">
+        <label class="visually-hidden" for="region">Région</label>
+        <select id="region" name="region"></select>
+        <button type="submit" class="btn btn-primary">Chercher</button>
+      </form>
+    </header>
+
+    <nav class="recent" id="recent" aria-label="Joueurs consultés récemment"></nav>
+
+    <p class="message" id="message" role="alert" hidden></p>
+
+    <section class="player" id="player" hidden>
+      <div class="player-head">
+        <div class="identity">
+          <h1 class="player-name"><span id="p-name"></span><span class="tag" id="p-tag"></span></h1>
+          <div class="ranks" id="p-ranks"></div>
+        </div>
+        <div class="sync">
+          <button type="button" class="btn" id="sync-btn">Mettre à jour</button>
+          <span class="sync-info" id="sync-info"></span>
+        </div>
+      </div>
+
+      <div class="progress" id="progress" hidden>
+        <div class="progress-text" id="progress-text"></div>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+
+      <div class="role-split" id="role-split" aria-label="Répartition des rôles sur la saison"></div>
+
+      <div class="filters">
+        <div class="segmented" id="role-filter" role="group" aria-label="Rôle"></div>
+        <div class="segmented" id="queue-filter" role="group" aria-label="File"></div>
+      </div>
+
+      <div class="columns">
+        <section class="column" aria-labelledby="col-season-title">
+          <header class="column-head">
+            <h2 id="col-season-title">Saison</h2>
+            <span class="column-sub" id="season-sub"></span>
+          </header>
+          <ol class="champ-list" id="season-list"></ol>
+        </section>
+        <section class="column" aria-labelledby="col-30-title">
+          <header class="column-head">
+            <h2 id="col-30-title">30 derniers jours</h2>
+            <span class="column-sub" id="last30-sub"></span>
+          </header>
+          <ol class="champ-list" id="last30-list"></ol>
+        </section>
+      </div>
+
+      <section class="recent-games" aria-labelledby="recent-title">
+        <h2 id="recent-title">Dernières parties</h2>
+        <ol class="games-strip" id="games-strip"></ol>
+      </section>
+    </section>
+
+    <section class="empty-state" id="empty-state">
+      <p>Entre le Riot ID d'un adversaire pour voir ses champions sur la saison et sur les 30 derniers jours, rôle par rôle.</p>
+      <p>La première recherche récupère tout son historique de ranked depuis le début de saison, ce qui peut prendre quelques minutes. Les mises à jour suivantes ne vont chercher que les nouvelles parties.</p>
+    </section>
+  </main>
+  <script src="app.js" type="module"></script>
+</body>
+</html>

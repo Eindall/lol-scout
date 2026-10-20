@@ -1,0 +1,15 @@
+services:
+  lol-scout:
+    build: .
+    container_name: lol-scout
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - proxy      # pour que Caddy joigne lol-scout:3000
+      # - postgres # ajoute le réseau de ton conteneur Postgres s'il n'est pas sur "proxy"
+
+networks:
+  proxy:
+    external: true # remplace par le nom de ton réseau Docker partagé
+  # postgres:
+  #   external: true
