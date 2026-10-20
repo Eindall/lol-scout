@@ -98,9 +98,9 @@ async function riotGet(host, path, query = {}) {
       continue;
     }
     if (res.status === 401 || res.status === 403) {
-      throw new RiotError(res.status, 'Clé API Riot refusée : elle a expiré ou elle est invalide.');
+      throw new RiotError(res.status, 'Riot API key rejected: it has expired or is invalid.');
     }
-    throw new RiotError(res.status, `Erreur ${res.status} de l'API Riot sur ${path}`);
+    throw new RiotError(res.status, `Riot API error ${res.status} on ${path}`);
   }
 }
 

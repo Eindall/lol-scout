@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Scout LoL</title>
+  <title>Draft Scout</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔭</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,14 +16,14 @@
       <a class="wordmark" href="./">Scout</a>
       <form class="search" id="search-form" autocomplete="off">
         <label class="visually-hidden" for="riot-id">Riot ID</label>
-        <input id="riot-id" name="riotId" type="text" placeholder="Pseudo#TAG" required spellcheck="false">
-        <label class="visually-hidden" for="region">Région</label>
+        <input id="riot-id" name="riotId" type="text" placeholder="Name#TAG" required spellcheck="false">
+        <label class="visually-hidden" for="region">Region</label>
         <select id="region" name="region"></select>
-        <button type="submit" class="btn btn-primary">Chercher</button>
+        <button type="submit" class="btn btn-primary">Search</button>
       </form>
     </header>
 
-    <nav class="recent" id="recent" aria-label="Joueurs consultés récemment"></nav>
+    <nav class="recent" id="recent" aria-label="Recently viewed players"></nav>
 
     <p class="message" id="message" role="alert" hidden></p>
 
@@ -34,7 +34,7 @@
           <div class="ranks" id="p-ranks"></div>
         </div>
         <div class="sync">
-          <button type="button" class="btn" id="sync-btn">Mettre à jour</button>
+          <button type="button" class="btn" id="sync-btn">Update</button>
           <span class="sync-info" id="sync-info"></span>
         </div>
       </div>
@@ -44,24 +44,24 @@
         <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
       </div>
 
-      <div class="role-split" id="role-split" aria-label="Répartition des rôles sur la saison"></div>
+      <div class="role-split" id="role-split" aria-label="Role distribution this season"></div>
 
       <div class="filters">
-        <div class="segmented" id="role-filter" role="group" aria-label="Rôle"></div>
-        <div class="segmented" id="queue-filter" role="group" aria-label="File"></div>
+        <div class="segmented" id="role-filter" role="group" aria-label="Role"></div>
+        <div class="segmented" id="queue-filter" role="group" aria-label="Queue"></div>
       </div>
 
       <div class="columns">
         <section class="column" aria-labelledby="col-season-title">
           <header class="column-head">
-            <h2 id="col-season-title">Saison</h2>
+            <h2 id="col-season-title">Season</h2>
             <span class="column-sub" id="season-sub"></span>
           </header>
           <ol class="champ-list" id="season-list"></ol>
         </section>
         <section class="column" aria-labelledby="col-30-title">
           <header class="column-head">
-            <h2 id="col-30-title">30 derniers jours</h2>
+            <h2 id="col-30-title">Last 30 days</h2>
             <span class="column-sub" id="last30-sub"></span>
           </header>
           <ol class="champ-list" id="last30-list"></ol>
@@ -69,16 +69,19 @@
       </div>
 
       <section class="recent-games" aria-labelledby="recent-title">
-        <h2 id="recent-title">Dernières parties</h2>
+        <h2 id="recent-title">Recent games</h2>
         <ol class="games-strip" id="games-strip"></ol>
       </section>
     </section>
 
     <section class="empty-state" id="empty-state">
-      <p>Entre le Riot ID d'un adversaire pour voir ses champions sur la saison et sur les 30 derniers jours, rôle par rôle.</p>
-      <p>La première recherche récupère tout son historique de ranked depuis le début de saison, ce qui peut prendre quelques minutes. Les mises à jour suivantes ne vont chercher que les nouvelles parties.</p>
+      <p>Enter an opponent's Riot ID to see their champions over the season and the last 30 days, role by role.</p>
+      <p>The first search fetches their whole ranked history since the start of the season, which can take a few minutes. Later updates only fetch new games.</p>
     </section>
   </main>
+  <footer class="site-footer">
+    <p>Draft Scout isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.</p>
+  </footer>
   <script src="app.js" type="module"></script>
 </body>
 </html>

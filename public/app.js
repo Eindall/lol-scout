@@ -1,5 +1,5 @@
 const ROLES = [
-  { id: 'ALL', label: 'Tous' },
+  { id: 'ALL', label: 'All' },
   { id: 'TOP', label: 'Top' },
   { id: 'JUNGLE', label: 'Jungle' },
   { id: 'MIDDLE', label: 'Mid' },
@@ -7,18 +7,18 @@ const ROLES = [
   { id: 'UTILITY', label: 'Support' },
 ];
 const ROLE_LABEL = Object.fromEntries(ROLES.map((r) => [r.id, r.label]));
-ROLE_LABEL.UNKNOWN = 'Inconnu';
+ROLE_LABEL.UNKNOWN = 'Unknown';
 
 const QUEUES = [
   { id: 'ranked', label: 'Ranked' },
   { id: 'solo', label: 'Solo' },
   { id: 'flex', label: 'Flex' },
 ];
-const QUEUE_LABEL = { 420: 'Solo', 440: 'Flex', 400: 'Normale', 430: 'Normale', 490: 'Rapide', 700: 'Clash', 0: 'Custom' };
+const QUEUE_LABEL = { 420: 'Solo', 440: 'Flex', 400: 'Normal', 430: 'Normal', 490: 'Quickplay', 700: 'Clash', 0: 'Custom' };
 
 const TIERS = {
-  IRON: 'Fer', BRONZE: 'Bronze', SILVER: 'Argent', GOLD: 'Or', PLATINUM: 'Platine',
-  EMERALD: 'Émeraude', DIAMOND: 'Diamant', MASTER: 'Maître', GRANDMASTER: 'Grand maître', CHALLENGER: 'Challenger',
+  IRON: 'Iron', BRONZE: 'Bronze', SILVER: 'Silver', GOLD: 'Gold', PLATINUM: 'Platinum',
+  EMERALD: 'Emerald', DIAMOND: 'Diamond', MASTER: 'Master', GRANDMASTER: 'Grandmaster', CHALLENGER: 'Challenger',
 };
 
 const state = {
@@ -31,9 +31,9 @@ const state = {
 };
 
 const $ = (id) => document.getElementById(id);
-const nf = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 });
-const rtf = new Intl.RelativeTimeFormat('fr', { numeric: 'auto' });
-const dateFmt = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+const nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 });
+const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+const dateFmt = new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
 
 /** Petit créateur d'éléments, pour ne jamais injecter de HTML brut. */
 function h(tag, props = {}, ...children) {
@@ -55,7 +55,7 @@ function h(tag, props = {}, ...children) {
 async function api(path, options) {
   const res = await fetch(path, options);
   const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(body.error ?? `Erreur ${res.status}`);
+  if (!res.ok) throw new Error(body.error ?? `Error ${res.status}`);
   return body;
 }
 
@@ -67,15 +67,15 @@ function showMessage(text) {
 
 function relative(date) {
   const diff = (new Date(date).getTime() - Date.now()) / 1000;
-  // En jours jusqu'à deux mois : plus précis que « le mois dernier » pour du scouting
+  // In days up to two months: more precise than "last month" for scouting
   const units = [['year', 365 * 86400, 365 * 86400], ['month', 30 * 86400, 60 * 86400], ['day', 86400, 86400], ['hour', 3600, 3600], ['minute', 60, 60]];
   for (const [unit, size, threshold] of units) {
     if (Math.abs(diff) >= threshold) return rtf.format(Math.round(diff / size), unit);
   }
-  return "à l'instant";
+  return 'just now';
 }
 
-const pct = (n) => `${Math.round(n * 100)}\u202f%`;
+const pct = (n) => `${Math.round(n * 100)}%`;
 
 // ---------- Data Dragon ----------
 
@@ -83,7 +83,7 @@ async function loadDDragon() {
   try {
     const versions = await (await fetch('https://ddragon.leagueoflegends.com/api/versions.json')).json();
     const version = versions[0];
-    const data = await (await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/data/fr_FR/champion.json`)).json();
+    const data = await (await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion.json`)).json();
     state.ddragon.version = version;
     for (const c of Object.values(data.data)) {
       state.ddragon.champs.set(Number(c.key), { id: c.id, name: c.name });
@@ -170,17 +170,17 @@ function renderPlayerHead() {
     const total = r.wins + r.losses;
     ranks.push(
       h('span', {}, `${label} `, h('strong', {}, `${tier}, ${r.lp} LP`),
-        total ? ` (${total} parties, ${pct(r.wins / total)})` : ''),
+        total ? ` (${total} games, ${pct(r.wins / total)})` : ''),
     );
   }
-  if (ranks.length === 0 && p.rank) ranks.push(h('span', {}, 'Non classé cette saison'));
+  if (ranks.length === 0 && p.rank) ranks.push(h('span', {}, 'Unranked this season'));
   $('p-ranks').replaceChildren(...ranks);
 
   const running = p.sync?.state === 'running';
   const btn = $('sync-btn');
   btn.disabled = running;
-  btn.textContent = running ? 'Mise à jour…' : 'Mettre à jour';
-  $('sync-info').textContent = p.lastSyncedAt ? `Mis à jour ${relative(p.lastSyncedAt)}` : 'Jamais mis à jour';
+  btn.textContent = running ? 'Updating…' : 'Update';
+  $('sync-info').textContent = p.lastSyncedAt ? `Updated ${relative(p.lastSyncedAt)}` : 'Never updated';
 }
 
 function renderProgress() {
@@ -192,12 +192,12 @@ function renderProgress() {
   }
   box.hidden = false;
   if (job.state === 'error') {
-    $('progress-text').textContent = `La mise à jour a échoué : ${job.error}`;
+    $('progress-text').textContent = `Update failed: ${job.error}`;
     $('progress-fill').style.width = '0';
     return;
   }
   if (job.phase === 'ids') {
-    $('progress-text').textContent = 'Recherche des parties à récupérer…';
+    $('progress-text').textContent = 'Looking for games to fetch…';
     $('progress-fill').style.width = '2%';
     return;
   }
@@ -206,11 +206,11 @@ function renderProgress() {
   if (done > 5 && done < total) {
     const elapsed = Date.now() - job.startedAt;
     const remainingMin = Math.ceil(((elapsed / done) * (total - done)) / 60000);
-    eta = remainingMin <= 1 ? ', moins d’une minute restante' : `, environ ${remainingMin} min restantes`;
+    eta = remainingMin <= 1 ? ', less than a minute left' : `, about ${remainingMin} min left`;
   }
   $('progress-text').textContent = total === 0
-    ? 'Aucune nouvelle partie.'
-    : `Récupération des parties : ${done} sur ${total}${eta}`;
+    ? 'No new games.'
+    : `Fetching games: ${done} of ${total}${eta}`;
   $('progress-fill').style.width = total ? `${(done / total) * 100}%` : '100%';
 }
 
@@ -227,7 +227,7 @@ function renderRoleSplit(roles) {
       return h('div', {
         class: `role-seg${r.role === state.role ? ' is-selected' : ''}`,
         style: { flex: `${r.games} 1 0` },
-        title: `${ROLE_LABEL[r.role] ?? r.role} : ${r.games} parties (${pct(share)})`,
+        title: `${ROLE_LABEL[r.role] ?? r.role} : ${r.games} games (${pct(share)})`,
       },
       share >= 0.07 ? [ROLE_LABEL[r.role] ?? r.role, h('span', { class: 'pct' }, pct(share))] : '');
     }),
@@ -238,13 +238,13 @@ function summary(rows) {
   const games = rows.reduce((s, r) => s + r.games, 0);
   const wins = rows.reduce((s, r) => s + r.wins, 0);
   if (!games) return '';
-  return `${games} partie${games > 1 ? 's' : ''}, ${pct(wins / games)} de victoires`;
+  return `${games} game${games > 1 ? 's' : ''}, ${pct(wins / games)} win rate`;
 }
 
 function renderChampList(list, rows, { maxGames, seasonById } = {}) {
   if (rows.length === 0) {
-    const where = state.role === 'ALL' ? '' : ` en ${ROLE_LABEL[state.role]}`;
-    list.replaceChildren(h('li', { class: 'list-empty' }, `Aucune partie${where} sur cette période.`));
+    const where = state.role === 'ALL' ? '' : ` as ${ROLE_LABEL[state.role]}`;
+    list.replaceChildren(h('li', { class: 'list-empty' }, `No games${where} in this period.`));
     return;
   }
   const max = maxGames ?? Math.max(...rows.map((r) => r.games));
@@ -253,17 +253,17 @@ function renderChampList(list, rows, { maxGames, seasonById } = {}) {
       const { name } = champInfo(r.champion_id, r.champion_name);
       const wr = r.wins / r.games;
       const kda = (r.kills + r.assists) / Math.max(1, r.deaths);
-      // « Nouveau » : aucune partie sur ce champion avant les 30 derniers jours
+      // "New": no game on this champion before the last 30 days
       const isNew = seasonById && r.games >= 2 && (seasonById.get(r.champion_id) ?? 0) <= r.games;
       return h('li', { class: 'champ-row' },
         champIcon(r.champion_id, r.champion_name, 'champ-icon', 40),
         h('div', { class: 'champ-main' },
-          h('div', { class: 'champ-name' }, h('span', {}, name), isNew ? h('span', { class: 'badge-new' }, 'Nouveau') : null),
+          h('div', { class: 'champ-name' }, h('span', {}, name), isNew ? h('span', { class: 'badge-new' }, 'New') : null),
           h('div', { class: 'games-bar' },
             h('span', { class: 'bar', style: { width: `${Math.max(4, (r.games / max) * 120)}px` } }),
-            h('span', {}, `dernière ${relative(r.last_played)}`)),
+            h('span', {}, `last played ${relative(r.last_played)}`)),
         ),
-        h('div', { class: 'champ-games', title: 'Parties jouées' }, r.games),
+        h('div', { class: 'champ-games', title: 'Games played' }, r.games),
         h('div', { class: 'champ-stats' },
           h('span', { class: `champ-wr ${r.games >= 3 ? (wr >= 0.55 ? 'wr-good' : wr < 0.45 ? 'wr-bad' : '') : ''}` }, pct(wr)),
           h('span', { class: 'champ-kda' }, `${nf.format(kda)} KDA`),
@@ -276,13 +276,13 @@ function renderChampList(list, rows, { maxGames, seasonById } = {}) {
 function renderGames(games) {
   const strip = $('games-strip');
   if (games.length === 0) {
-    strip.replaceChildren(h('li', { class: 'list-empty' }, 'Aucune partie récente.'));
+    strip.replaceChildren(h('li', { class: 'list-empty' }, 'No recent games.'));
     return;
   }
   strip.replaceChildren(
     ...games.map((g) => {
       const { name } = champInfo(g.champion_id, g.champion_name);
-      const title = `${name}, ${g.win ? 'victoire' : 'défaite'} ${g.kills}/${g.deaths}/${g.assists}, ${ROLE_LABEL[g.team_position] ?? '?'}, ${QUEUE_LABEL[g.queue_id] ?? g.queue_id}, ${relative(g.game_start)}`;
+      const title = `${name}, ${g.win ? 'win' : 'loss'} ${g.kills}/${g.deaths}/${g.assists}, ${ROLE_LABEL[g.team_position] ?? '?'}, ${QUEUE_LABEL[g.queue_id] ?? g.queue_id}, ${relative(g.game_start)}`;
       return h('li', { class: `game${g.win ? ' is-win' : ''}`, title },
         champIcon(g.champion_id, g.champion_name, 'game-icon', 48),
         h('span', { class: 'kda' }, `${g.kills}/${g.deaths}/${g.assists}`),
@@ -304,7 +304,7 @@ async function loadStats() {
     renderRoleSplit(stats.roles);
     renderChampList($('season-list'), stats.season);
     renderChampList($('last30-list'), stats.last30, { seasonById });
-    $('season-sub').textContent = [`depuis le ${dateFmt.format(new Date(stats.seasonStart))}`, summary(stats.season)].filter(Boolean).join(', ');
+    $('season-sub').textContent = [`since ${dateFmt.format(new Date(stats.seasonStart))}`, summary(stats.season)].filter(Boolean).join(', ');
     $('last30-sub').textContent = summary(stats.last30);
     renderGames(stats.recent);
   } catch (err) {

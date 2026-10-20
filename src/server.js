@@ -28,11 +28,11 @@ function serializePlayer(p) {
 async function loadPlayer(req, res) {
   const { puuid } = req.params;
   if (!PUUID_RE.test(puuid)) {
-    res.status(400).json({ error: 'Identifiant de joueur invalide.' });
+    res.status(400).json({ error: 'Invalid player ID.' });
     return null;
   }
   const player = await db.getPlayer(puuid);
-  if (!player) res.status(404).json({ error: 'Joueur inconnu, relance une recherche.' });
+  if (!player) res.status(404).json({ error: 'Unknown player, run a new search.' });
   return player;
 }
 
@@ -60,13 +60,13 @@ app.get('/api/players', async (req, res) => {
 app.get('/api/lookup', async (req, res) => {
   const riotId = String(req.query.riotId ?? '').trim();
   const region = String(req.query.region ?? 'euw');
-  if (!REGIONS[region]) return res.status(400).json({ error: 'Région inconnue.' });
+  if (!REGIONS[region]) return res.status(400).json({ error: 'Unknown region.' });
 
   const hash = riotId.lastIndexOf('#');
   const gameName = riotId.slice(0, hash).trim();
   const tagLine = riotId.slice(hash + 1).trim();
   if (hash < 0 || !gameName || !tagLine) {
-    return res.status(400).json({ error: 'Écris le Riot ID au format Pseudo#TAG.' });
+    return res.status(400).json({ error: 'Enter the Riot ID as Name#TAG.' });
   }
 
   let player = await db.findPlayerByRiotId(region, gameName, tagLine);
@@ -75,7 +75,7 @@ app.get('/api/lookup', async (req, res) => {
   } else {
     const account = await riot.accountByRiotId(region, gameName, tagLine);
     if (!account) {
-      return res.status(404).json({ error: `Aucun compte ${gameName}#${tagLine} sur ${REGIONS[region].label}.` });
+      return res.status(404).json({ error: `No account ${gameName}#${tagLine} on ${REGIONS[region].label}.` });
     }
     player = await db.upsertPlayer({
       puuid: account.puuid,
@@ -108,7 +108,7 @@ app.get('/api/players/:puuid/stats', async (req, res) => {
   res.json(stats);
 });
 
-app.use('/api', (req, res) => res.status(404).json({ error: 'Route inconnue.' }));
+app.use('/api', (req, res) => res.status(404).json({ error: 'Unknown route.' }));
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
@@ -116,12 +116,12 @@ app.use((err, req, res, next) => {
     return res.status(502).json({ error: err.message });
   }
   console.error(err);
-  res.status(500).json({ error: 'Erreur interne, regarde les logs du conteneur.' });
+  res.status(500).json({ error: 'Internal error, check the container logs.' });
 });
 
 await db.migrate();
 const server = app.listen(config.port, () => {
-  console.log(`lol-scout prêt sur le port ${config.port} (saison depuis ${config.seasonStart.toISOString().slice(0, 10)})`);
+  console.log(`lol-scout ready on port ${config.port} (season since ${config.seasonStart.toISOString().slice(0, 10)})`);
 });
 
 for (const signal of ['SIGTERM', 'SIGINT']) {
